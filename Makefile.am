@@ -3,4 +3,4 @@ SUBDIRS = src tests
 
 ACLOCAL_AMFLAGS = -I m4
 
-EXTRA_DIST = autogen.sh
+EXTRA_DIST = README.md
