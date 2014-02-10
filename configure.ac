@@ -6,7 +6,6 @@ m4_define(OLIGO_VERSION, m4_normalize(m4_include(VERSION)))
 
 AC_INIT([oligo], [OLIGO_VERSION], [sandain@hotmail.com])
 
-
 AC_CONFIG_AUX_DIR(config)
 AC_CONFIG_SRCDIR(src/oligo.c)
 
