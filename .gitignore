@@ -1,20 +1,23 @@
 # Ignore the program binary.
 oligo
 
-# Ignore test binaries.
+# Ignore the test binaries.
 tests/test_fasta
 
 # Ignore the docs directory.
 docs/*
 
-# Ignore build files.
+# Ignore the distribution files.
+*.tar.gz
+
+# Ignore the build files.
 *.la
 *.lo
 *.o
 
+# Ignore the automake files.
 *.log
 *.trs
-
 aclocal.m4
 autom4te.cache
 config
@@ -26,4 +29,3 @@ Makefile
 Makefile.in
 .deps
 .libs
-
