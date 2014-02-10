@@ -26,6 +26,12 @@
  *  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * 
+ *
+ * @file test_fasta.c
+ */
+
 #include <check.h>
 
 #include "../src/fasta.h"
@@ -66,7 +72,7 @@ START_TEST (test_fasta_identifiers) {
   );
   ck_assert_str_eq (
     fasta->ids[1],
-    "gi|86607503:c28351-26084"
+    "gb|CP000240.1|:c28351-26084"
   );
 } END_TEST
 
