@@ -1,0 +1,29 @@
+# Ignore the program binary.
+oligo
+
+# Ignore test binaries.
+tests/test_fasta
+
+# Ignore the docs directory.
+docs/*
+
+# Ignore build files.
+*.la
+*.lo
+*.o
+
+*.log
+*.trs
+
+aclocal.m4
+autom4te.cache
+config
+config.status
+configure
+libtool
+m4
+Makefile
+Makefile.in
+.deps
+.libs
+
