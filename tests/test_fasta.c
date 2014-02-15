@@ -40,7 +40,7 @@
 Fasta * fasta;
 
 void setup (void) {
-  fasta = newFasta ("test_fasta.nwk");
+  fasta = newFasta ("test_fasta.fa");
 }
 
 void teardown (void) {
