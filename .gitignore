@@ -3,6 +3,7 @@ oligo
 
 # Ignore the test binaries.
 tests/test_fasta
+tests/test_sequence
 
 # Ignore the docs directory.
 docs/*

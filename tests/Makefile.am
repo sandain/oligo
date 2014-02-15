@@ -24,7 +24,7 @@
 #  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 #  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-TESTS = test_fasta
+TESTS = test_fasta test_sequence
 
 check_PROGRAMS = $(TESTS)
 
@@ -32,6 +32,13 @@ test_fasta_SOURCES = test_fasta.c
 test_fasta_CFLAGS = @CHECK_CFLAGS@
 test_fasta_LDADD = \
     $(top_builddir)/src/liboligo_fasta.la \
+    $(top_builddir)/src/liboligo_sequence.la \
+    $(top_builddir)/src/liboligo_tools.la \
+    @CHECK_LIBS@
+
+test_sequence_SOURCES = test_sequence.c
+test_sequence_CFLAGS = @CHECK_CFLAGS@
+test_sequence_LDADD = \
     $(top_builddir)/src/liboligo_sequence.la \
     $(top_builddir)/src/liboligo_tools.la \
     @CHECK_LIBS@
