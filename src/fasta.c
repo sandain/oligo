@@ -158,6 +158,7 @@ void freeFasta (
     free (fasta->ids[i]);
   }
   free (fasta->ids);
+  free (fasta->lengths);
   free (fasta->offsets);
   free (fasta);
 }
@@ -194,6 +195,8 @@ Sequence * parseSequence (
   /* Grab the sequence description from the fasta buffer. */
   char * desc = strdup(buffer + strlen (id) + 2);
   setDescription (seq, desc);
+  /* Initialize the sequence buffer. */
+  seqBuffer[0] = '\0';
   /* Grab the sequence data. */
   while (fgets (buffer, LINE_MAX, file)) {
     /* Stop when the next sequence is found. */
@@ -212,5 +215,6 @@ Sequence * parseSequence (
   free (buffer);
   free (seqBuffer);
   free (token);
+  free (desc);
   return seq;
 }
