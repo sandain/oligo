@@ -114,7 +114,7 @@ void setSequence (Sequence * seq, char * sequence) {
  *
  * @memberof Sequence
  * @public
- * @param seq This sequence object to free.
+ * @param seq The sequence object to free.
  */
 void freeSequence (Sequence * seq) {
   free (seq->identifier);
