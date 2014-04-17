@@ -110,6 +110,78 @@ void setSequence (Sequence * seq, char * sequence) {
 }
 
 /**
+ * Get the sequence identifier.
+ *
+ * @memberof Sequence
+ * @public
+ * @param seq The sequence object.
+ * @return The sequence identifier.
+ */
+char * getIdentifier (Sequence * seq) {
+  return seq->identifier;
+}
+
+/**
+ * Get the length of the sequence identifier.
+ *
+ * @memberof Sequence
+ * @public
+ * @param seq The sequence object.
+ * @return The length of the sequence identifier.
+ */
+size_t getIdentifierLength (Sequence * seq) {
+  return seq->identifierLength;
+}
+
+/**
+ * Get the sequence description.
+ *
+ * @memberof Sequence
+ * @public
+ * @param seq The sequence object.
+ * @return The sequence description.
+ */
+char * getDescription (Sequence * seq) {
+  return seq->description;
+}
+
+/**
+ * Get the length of the sequence description.
+ *
+ * @memberof Sequence
+ * @public
+ * @param seq The sequence object.
+ * @return The length of the sequence description.
+ */
+size_t getDescriptionLength (Sequence * seq) {
+  return seq->descriptionLength;
+}
+
+/**
+ * Get the sequence.
+ *
+ * @memberof Sequence
+ * @public
+ * @param seq The sequence object.
+ * @return The sequence.
+ */
+char * getSequence (Sequence * seq) {
+  return seq->sequence;
+}
+
+/**
+ * Get the length of the sequence.
+ *
+ * @memberof Sequence
+ * @public
+ * @param seq The sequence object.
+ * @return The length of the sequence.
+ */
+size_t getSequenceLength (Sequence * seq) {
+  return seq->sequenceLength;
+}
+
+/**
  * Free the memory reserved for this sequence object.
  *
  * @memberof Sequence
