@@ -38,11 +38,15 @@
 
 Sequence * seq;
 
+char * testIdentifier = "test_sequence";
+char * testDescription = "Test description";
+char * testSequence = "acgttgca";
+
 void setup (void) {
   seq = newSequence ();
-  setIdentifier (seq, "test_sequence");
-  setDescription (seq, "Test description");
-  setSequence (seq, "acgttgca");
+  setIdentifier (seq, testIdentifier);
+  setDescription (seq, testDescription);
+  setSequence (seq, testSequence);
 }
 
 void teardown (void) {
@@ -51,43 +55,43 @@ void teardown (void) {
 
 START_TEST (test_seq_identifier) {
   ck_assert_str_eq (
-    seq->identifier,
-    "test_sequence"
+    getIdentifier (seq),
+    testIdentifier
   );
 } END_TEST
 
 START_TEST (test_seq_identifier_length) {
   ck_assert_int_eq (
-    seq->identifierLength,
-    13
+    getIdentifierLength (seq),
+    strlen (testIdentifier)
   );
 } END_TEST
 
 START_TEST (test_seq_description) {
   ck_assert_str_eq (
-    seq->description,
-    "Test description"
+    getDescription (seq),
+    testDescription
   );
 } END_TEST
 
 START_TEST (test_seq_description_length) {
   ck_assert_int_eq (
-    seq->descriptionLength,
-    16
+    getDescriptionLength (seq),
+    strlen (testDescription)
   );
 } END_TEST
 
 START_TEST (test_seq_sequence) {
   ck_assert_str_eq (
-    seq->sequence,
-    "acgttgca"
+    getSequence (seq),
+    testSequence
   );
 } END_TEST
 
 START_TEST (test_seq_sequence_length) {
   ck_assert_int_eq (
-    seq->sequenceLength,
-    8
+    getSequenceLength (seq),
+    strlen (testSequence)
   );
 } END_TEST
 
