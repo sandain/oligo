@@ -92,6 +92,66 @@ extern void setDescription (Sequence * seq, char * description);
 extern void setSequence (Sequence * seq, char * sequence);
 
 /**
+ * Get the sequence identifier.
+ *
+ * @memberof Sequence
+ * @public
+ * @param seq The sequence object.
+ * @return The sequence identifier.
+ */
+extern char * getIdentifier (Sequence * seq);
+
+/**
+ * Get the length of the sequence identifier.
+ *
+ * @memberof Sequence
+ * @public
+ * @param seq The sequence object.
+ * @return The length of the sequence identifier.
+ */
+extern size_t getIdentifierLength (Sequence * seq);
+
+/**
+ * Get the sequence description.
+ *
+ * @memberof Sequence
+ * @public
+ * @param seq The sequence object.
+ * @return The sequence description.
+ */
+extern char * getDescription (Sequence * seq);
+
+/**
+ * Get the length of the sequence description.
+ *
+ * @memberof Sequence
+ * @public
+ * @param seq The sequence object.
+ * @return The length of the sequence description.
+ */
+extern size_t getDescriptionLength (Sequence * seq);
+
+/**
+ * Get the sequence.
+ *
+ * @memberof Sequence
+ * @public
+ * @param seq The sequence object.
+ * @return The sequence.
+ */
+extern char * getSequence (Sequence * seq);
+
+/**
+ * Get the length of the sequence.
+ *
+ * @memberof Sequence
+ * @public
+ * @param seq The sequence object.
+ * @return The length of the sequence.
+ */
+extern size_t getSequenceLength (Sequence * seq);
+
+/**
  * Free the memory reserved for this sequence object.
  *
  * @memberof Sequence
