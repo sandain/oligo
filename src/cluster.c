@@ -67,7 +67,7 @@ Cluster * newCluster (void) {
  * @param debug Print debugging information with values > 0.
  */
 void runKmeans (
-  Sequence ** sequences,
+  char ** ids,
   vl_uint32 numSequences,
   vl_uint32 numCombinations,
   double * frequency,
@@ -126,24 +126,24 @@ void runKmeans (
   );
 
 
-   Cluster ** clusters;
+/*  Cluster ** clusters;*/
 
-  clusters = malloc (numCenters * sizeof (Cluster*));
+/*  clusters = malloc (numCenters * sizeof (Cluster*));*/
 
-  for (i = 0; i < numCenters; i ++) {
-    clusters[i] = newCluster ();
+/*  for (i = 0; i < numCenters; i ++) {*/
+/*    clusters[i] = newCluster ();*/
 
-    for (j = 0; j < numSequences; j ++) {
+/*    for (j = 0; j < numSequences; j ++) {*/
 
 
-    }
-  }
+/*    }*/
+/*  }*/
   
 
   for (i = 0; i < numSequences; i ++) {
     printf (
       "%23s: %d\t%f\n",
-      sequences[i]->identifier, assignments[i], distances[i]
+      ids[i], assignments[i], distances[i]
     );
   }
 
@@ -164,7 +164,7 @@ void runKmeans (
  * @param debug Print debugging information with values > 0.
  */
 void runAIB (
-  Sequence ** sequences,
+  char ** ids,
   vl_uint32 numSequences,
   vl_uint32 numCombinations,
   double * frequency,
@@ -204,7 +204,7 @@ void runAIB (
     /* If the node being built for the current index was not the result of a
        merge, use the sequence identifier as the name. */
     if (i < numSequences) {
-      setNodeName (nodes[i], sequences[i]->identifier);
+      setNodeName (nodes[i], ids[i]);
     }
   }
 

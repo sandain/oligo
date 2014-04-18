@@ -66,7 +66,7 @@ extern Cluster * newCluster (void);
 /**
  * Run the Kmeans algorithm provided by the VLFeat library.
  *
- * @param sequences The sequences to run through the Kmeans algorithm.
+ * @param ids The sequence identifiers.
  * @param numSequences The number of sequences in the sequences array.
  * @param numCombinations The number of possible oligo combinations.
  * @param frequency The oligo frequency matrix.
@@ -74,7 +74,7 @@ extern Cluster * newCluster (void);
  * @param debug Print debugging information with values > 0.
  */
 extern void runKmeans (
-  Sequence ** sequences,
+  char ** ids,
   vl_uint32 numSequences,
   vl_uint32 numCombinations,
   double * frequency,
@@ -86,14 +86,14 @@ extern void runKmeans (
  * Run the Agglomerative Information Bottleneck (AIB) method provided
  * by the VLFeat library.
  *
- * @param sequences The sequences to run through the AIB algorithm.
+ * @param ids The sequence identifiers.
  * @param numSequences The number of sequences in the sequences array.
  * @param numCombinations The number of possible oligo combinations.
  * @param frequency The oligo frequency matrix.
  * @param debug Print debugging information with values > 0.
  */
 extern void runAIB (
-  Sequence ** sequences,
+  char ** ids,
   vl_uint32 numSequences,
   vl_uint32 numCombinations,
   double * frequency,
