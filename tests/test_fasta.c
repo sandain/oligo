@@ -49,45 +49,85 @@ void teardown (void) {
 
 START_TEST (test_fasta_size) {
   ck_assert_int_eq (
-    fasta->size,
-    2
-  );
-} END_TEST
-
-START_TEST (test_fasta_length) {
-  ck_assert_int_eq (
-    fasta->lengths[0],
-    2268
-  );
-  ck_assert_int_eq (
-    fasta->lengths[1],
-    2268
+    numberSequences (fasta),
+    3
   );
 } END_TEST
 
 START_TEST (test_fasta_identifiers) {
+  char ** ids = getIdentifiers (fasta);
   ck_assert_str_eq (
-    fasta->ids[0],
+    ids[0],
+    "test_sequence"
+  );
+  ck_assert_str_eq (
+    ids[1],
     "gb|CP000239.1|:2536947-2539214"
   );
   ck_assert_str_eq (
-    fasta->ids[1],
+    ids[2],
     "gb|CP000240.1|:c28351-26084"
+  );
+  free (ids);
+} END_TEST
+
+START_TEST (test_fasta_minimum_length) {
+  setMinimumLength (fasta, 2000);
+  ck_assert_int_eq (
+    numberSequences (fasta),
+    2
+  );
+  setMinimumLength (fasta, 1);
+  ck_assert_int_eq (
+    numberSequences (fasta),
+    3
   );
 } END_TEST
 
+START_TEST (test_fasta_next_sequence) {
+  Sequence * seq;
+  /* Check the first sequence. */
+  nextSequence (fasta, &seq);
+  ck_assert_str_eq (
+    getIdentifier (seq),
+    "test_sequence"
+  );
+  ck_assert_str_eq (
+    getDescription (seq),
+    "Test description"
+  );
+  ck_assert_str_eq (
+    getSequence (seq),
+    "acgttgca"
+  );
+  freeSequence (seq);
+  /* Check the second sequence. */
+  nextSequence (fasta, &seq);
+  ck_assert_str_eq (
+    getIdentifier (seq),
+    "gb|CP000239.1|:2536947-2539214"
+  );
+  freeSequence (seq);
+  /* Check the third sequence. */
+  nextSequence (fasta, &seq);
+  ck_assert_str_eq (
+    getIdentifier (seq),
+    "gb|CP000240.1|:c28351-26084"
+  );
+  freeSequence (seq);
+} END_TEST
+
+
 Suite * fasta_suite (void) {
   Suite *s = suite_create ("Fasta");
-
   /* Core test case */
   TCase *tc_core = tcase_create ("Core");
   tcase_add_checked_fixture (tc_core, setup, teardown);
   tcase_add_test (tc_core, test_fasta_size);
-  tcase_add_test (tc_core, test_fasta_length);
   tcase_add_test (tc_core, test_fasta_identifiers);
-
+  tcase_add_test (tc_core, test_fasta_minimum_length);
+  tcase_add_test (tc_core, test_fasta_next_sequence);
   suite_add_tcase (s, tc_core);
-
   return s;
 }
 
