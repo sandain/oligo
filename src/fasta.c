@@ -42,7 +42,6 @@
  * @param fileName The fasta formatted file to create this object from.
  * @return The new Fasta object.
  */
-
 Fasta * newFasta (
   char * fileName
 ) {
@@ -77,12 +76,14 @@ Fasta * newFasta (
   for (i = 0; i < fasta->size; i ++) {
     size_t offset = ftell (fasta->file);
     Sequence * seq = parseSequence (fasta->file);
-    fasta->ids[i] = strdup (seq->identifier);
-    fasta->lengths[i] = seq->sequenceLength;
+    fasta->ids[i] = strdup (getIdentifier (seq));
+    fasta->lengths[i] = getSequenceLength (seq);
     fasta->offsets[i] = offset;
     freeSequence (seq);
   }
   fseek (fasta->file, 0, SEEK_SET);
+  /* Default to a minimum sequence length of 1. */
+  fasta->minimumLength = 1;
   /* Set the current sequence as the first found in the file. */
   fasta->current = 0;
   return fasta;
@@ -101,6 +102,13 @@ int nextSequence (
   Fasta * fasta,
   Sequence ** seq
 ) {
+  /* Skip sequences that are not long enough. */
+  while (
+    fasta->current < fasta->size &&
+    fasta->lengths[fasta->current] < fasta->minimumLength
+  ) {
+    fasta->current ++;
+  }
   /* Make sure there are sequences available. */
   if (fasta->size <= fasta->current) {
     return 0;
@@ -115,29 +123,63 @@ int nextSequence (
 }
 
 /**
- * Retrieves all of the sequences larger than length from the fasta file.
+ * Retrieves the number of sequences in this object.
  *
- * @param fasta This fasta object.
- * @param length The minimum length of sequences to return.
- * @param sequences The array of sequences larger than length.
- * @return The number of sequences larger than length.
+ * @memberof Fasta
+ * @public
+ * @param fasta This Fasta object.
+ * @return The number of sequences longer than the minimum length.
  */
-size_t getSequences (
-  Fasta * fasta,
-  size_t length,
-  Sequence ** sequences
+size_t numberSequences (
+  Fasta * fasta
 ) {
-  Sequence * seq;
-  size_t numSequences;
-  /* Fill the sequences array. */
-  numSequences = 0;
-  while (nextSequence (fasta, &seq)) {
-    if (seq->sequenceLength >= length) {
-      sequences[numSequences] = seq;
-      numSequences ++;
+  size_t i;
+  size_t number = 0;
+  for (i = 0; i < fasta->size; i ++) {
+    if (fasta->lengths[i] >= fasta->minimumLength) {
+      number ++;
     }
   }
-  return numSequences;
+  return number;
+}
+
+/**
+ * Retrieves the identifiers of the sequences in this object.
+ *
+ * @memberof Fasta
+ * @public
+ * @param fasta This Fasta object.
+ * @return The number of sequences longer than length.
+ */
+extern char ** getIdentifiers (
+  Fasta * fasta
+) {
+  size_t i, j;
+  size_t number = numberSequences (fasta);
+  char ** ids = malloc (number * sizeof (char *));
+  j = 0;
+  for (i = 0; i < fasta->size; i ++) {
+    if (fasta->lengths[i] >= fasta->minimumLength) {
+      ids[j] = fasta->ids[i];
+      j ++;
+    }
+  }
+  return ids;
+}
+
+/**
+ * Set the minimum sequence length.
+ *
+ * @memberof Fasta
+ * @public
+ * @param fasta This Fasta object.
+ * @param length The minimum sequence length.
+ */
+void setMinimumLength (
+  Fasta * fasta,
+  size_t length
+) {
+  fasta->minimumLength = length;
 }
 
 /**
@@ -170,7 +212,7 @@ void freeFasta (
  * @param file The file with the sequence to parse.
  * @return The sequence.
  */
-Sequence * parseSequence (
+static Sequence * parseSequence (
   FILE * file
 ) {
   char * buffer = malloc (LINE_MAX * sizeof (char));

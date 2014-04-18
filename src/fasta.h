@@ -60,6 +60,7 @@ typedef struct Fasta {
   char ** ids;                     /**< An array of sequence identifiers. */
   size_t * lengths;                /**< An array of sequence lengths. */
   size_t * offsets;                /**< An array of file offsets. */
+  size_t minimumLength;            /**< The minimum sequence length. */
   size_t current;                  /**< The current sequence. */
 } Fasta;
 
@@ -90,17 +91,40 @@ extern int nextSequence (
 );
 
 /**
- * Retrieves all of the sequences larger than length from the fasta file.
+ * Retrieves the number of sequences in this object.
  *
- * @param fasta This fasta object.
- * @param length The minimum length of sequences to return.
- * @param sequences The array of sequences larger than length.
- * @return The number of sequences larger than length.
+ * @memberof Fasta
+ * @public
+ * @param fasta This Fasta object.
+ * @return The number of sequences longer than the minimum length.
  */
-extern size_t getSequences (
+extern size_t numberSequences (
+  Fasta * fasta
+);
+
+/**
+ * Retrieves the identifiers of the sequences in this object.
+ *
+ * @memberof Fasta
+ * @public
+ * @param fasta This Fasta object.
+ * @return The number of sequences longer than length.
+ */
+extern char ** getIdentifiers (
+  Fasta * fasta
+);
+
+/**
+ * Set the minimum sequence length.
+ *
+ * @memberof Fasta
+ * @public
+ * @param fasta This Fasta object.
+ * @param length The minimum sequence length.
+ */
+extern void setMinimumLength (
   Fasta * fasta,
-  size_t length,
-  Sequence ** sequences 
+  size_t length
 );
 
 /**
@@ -122,7 +146,7 @@ extern void freeFasta (
  * @param offset The file offset of the sequence to parse.
  * @return The sequence.
  */
-extern Sequence * parseSequence (
+static Sequence * parseSequence (
   FILE * file
 );
 
