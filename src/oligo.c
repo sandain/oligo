@@ -76,13 +76,12 @@ void generateOligonucleotides (
   size_t index
 );
 
-void oligoFrequency (
-  Sequence ** sequences,
+double * oligoFrequency (
+  Fasta * fasta,
   size_t numSequences,
-  size_t oligoLength,
-  size_t fragmentLength,
   size_t numCombinations,
-  double * frequency
+  size_t oligoLength,
+  size_t fragmentLength
 );
 
 /**
@@ -102,8 +101,8 @@ int main (
   size_t numCombinations;
   size_t i;
   double * frequency;
+  char ** ids;
   char * fastaFile;
-  Sequence ** sequences;
   /* Grab the fasta file from the command line, or produce an error. */
   if (argc < 2) {
     printf ("Error, fasta formatted sequence file not provided!\n");
@@ -136,32 +135,24 @@ int main (
   }
   /* Load the fasta file. */
   Fasta * fasta = newFasta (fastaFile);
-
-
-  sequences = malloc (fasta->size * sizeof (Sequence *));
-  numSequences = getSequences (fasta, fragmentLength, sequences);
-  freeFasta (fasta);
+  setMinimumLength (fasta, fragmentLength);
+  numSequences = numberSequences (fasta);
+  ids = getIdentifiers (fasta);
 
   // XXX Use the fasta object throughout.  Requires the fasta object to be smarter.
 
   /* Determine the number of nucleotide combinations. */
   numCombinations = power (4, oligoLength);
-  /* Initialize the frequency matrix. */
-  frequency = malloc (numSequences * numCombinations * sizeof (double *));
-  for (i = 0; i < numSequences * numCombinations; i ++) {
-    frequency[i] = 0.0;
-  }
   /* Generate the oligonucleotide usage frequency matrix. */
   printf ("Generating the oligo usage frequency matrix.\n");
-  oligoFrequency (
-    sequences, numSequences, oligoLength, fragmentLength, numCombinations,
-    frequency
+  frequency = oligoFrequency (
+    fasta, numSequences, numCombinations, oligoLength, fragmentLength
   );
   /* Display the oligonucleotide usage frequency matrix if debug is on. */
   if (DEBUG > 0) {
     size_t s, c;
     for (s = 0; s < numSequences; s ++) {
-      printf ("%s: ", sequences[s]->identifier);
+      printf ("%s: ", ids[s]);
       for (c = 0; c < numCombinations; c ++) {
         printf ("%.4f ", frequency[s + c * numCombinations]);
       }
@@ -171,19 +162,17 @@ int main (
 
   /* Run the Kmeans algorithm. */
   printf ("Running the Kmeans algorithm.\n");
-  runKmeans (sequences, numSequences, numCombinations, frequency, 10, DEBUG);
+  runKmeans (ids, numSequences, numCombinations, frequency, 10, DEBUG);
 
   /* Run the AIB algorithm. */
   printf ("Running the AIB algorithm.\n");
-  runAIB (sequences, numSequences, numCombinations, frequency, DEBUG);
+  runAIB (ids, numSequences, numCombinations, frequency, DEBUG);
 
 
 
   /* Free reserved memory. */
-  for (i = 0; i < numSequences; i++) {
-    freeSequence (sequences[i]);
-  }
-  free (sequences);
+  free (ids);
+  freeFasta (fasta);
   free (frequency);
   return 0;
 }
@@ -230,60 +219,67 @@ void generateOligonucleotides (
 /**
  * Calculate the oligo usage frequency for each sequence in a fasta file.
  *
- * @param sequences An array of sequences to analyze.
+ * @param fasta The fasta object.
  * @param numSequences The number of sequences.
  * @param oligoLength - The length of the oligos.
  * @param fragmentLength - The minimum length of sequences to use.
  * @param numCombinations - The number of possible oligo combinations.
- * @param frequency - The oligo frequency matrix to be generated.
+ * @return The oligo frequency matrix generated.
  */
-void oligoFrequency (
-  Sequence ** sequences,
+double * oligoFrequency (
+  Fasta * fasta,
   size_t numSequences,
-  size_t oligoLength,
-  size_t fragmentLength,
   size_t numCombinations,
-  double * frequency
+  size_t oligoLength,
+  size_t fragmentLength
 ) {
   size_t i, j, k, l;
   size_t numSamples;
   size_t numOligos;
   size_t stepSize;
+  double * frequency;
   char ** oligonucleotides;
   char * sample;
   char * oligo;
   int r;
   /* Initialize the random number generator. */
   srand (time (NULL));
+  /* Initialize the frequency matrix. */
+  frequency = malloc (numSequences * numCombinations * sizeof (double));
+  for (i = 0; i < numSequences * numCombinations; i ++) {
+    frequency[i] = 0.0;
+  }
   /* Generate all of the nucleotide combinations. */
   oligonucleotides = malloc (numCombinations * sizeof (char *));
   generateOligonucleotides (oligoLength, oligonucleotides, "", 0);
-
   /* Calculate the number of oligonucleotides that will be tested. */
   numOligos = floor (fragmentLength / oligoLength);
 
 /*
   #pragma omp parallel shared ( \
-    sequences, numSequences, oligoLength, numCombinations, frequency, \
+    fasta, numSequences, oligoLength, numCombinations, frequency, \
     oligonucleotides, numOligos \
   )
   #pragma omp for
 */
 
   /* Count the number of times each oligonucleotide appears in a sequence. */
-  for (i = 0; i < numSequences; i ++) {
+  Sequence * seq;
+  i = 0;
+  while (nextSequence (fasta, &seq)) {
+    size_t sequenceLength = getSequenceLength (seq);
     /* Take samples from the sequence, and average the nucleotide usage of
        the samples. */
     numSamples = rint (
-      (1.5 * sequences[i]->sequenceLength) / (1.0 * fragmentLength)
+      (1.5 * sequenceLength) / (1.0 * fragmentLength)
     );
     stepSize = rint (
-      (sequences[i]->sequenceLength - fragmentLength) / (1.0 * numSamples)
+      (sequenceLength - fragmentLength) / (1.0 * numSamples)
     );
     for (j = 0; j < numSamples; j ++) {
       /* Take a random sample of a section of the sequence. */
       r = rand() % stepSize + j * stepSize;
-      sample = strndup (sequences[i]->sequence + r, fragmentLength);
+      sample = strndup (getSequence (seq) + r, fragmentLength);
       for (k = 0; k < numOligos; k ++) {
         /* Compare the oligo generated from the sequence with each possible
            oligo. */
@@ -300,6 +296,8 @@ void oligoFrequency (
       }
       free (sample);
     }
+    freeSequence (seq);
+    i ++;
   }
   /* Normalize the frequency values based on the number of samples and
      length of the sequence. */
@@ -314,4 +312,5 @@ void oligoFrequency (
     free (oligonucleotides[i]);
   }
   free (oligonucleotides);
+  return frequency;
 }
